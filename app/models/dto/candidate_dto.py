@@ -1,13 +1,14 @@
 from dataclasses import dataclass
-from typing import List
-from app.models.dto.experience_dto import ExperienceDTO
+from typing import List, Optional
+
 
 @dataclass
 class CandidateDTO:
     candidate_id: str
-    candidate_name: str
-    highest_degree: str | None
+    name: Optional[str]       
+    email: Optional[str]
+    location: Optional[str]
+    highest_degree: Optional[str]
     total_experience_years: float
     skills: List[str]
-    experiences: List[ExperienceDTO]
-    source: List[str]
+    industries: List[str]

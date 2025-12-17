@@ -1,54 +1,53 @@
 from typing import List, Dict
 from app.models.candidate_entity import Candidate
 from app.models.dto.candidate_dto import CandidateDTO
+from app.models.dto.filter_params import CandidateFilterParams
 from app.repositories.base_candidate_repository import ICandidateRepository
+from app.utils.candidate_id import generate_candidate_id
 
 
 class CandidateService:
 
     def __init__(self, candidate_repository: ICandidateRepository):
-        self.candidate_repository = candidate_repository
+        self._repository = candidate_repository
 
-    async def filter_and_persiste_candidates(
+    async def filter_and_persist(
         self,
-        raw_candidates: List[Candidate],  # ✅ Candidate objects, not Dicts
-        industry: str | None,
-        skills: List[str] | None,
-        min_years: float | None,
+        candidates: List[Candidate],
+        filters: CandidateFilterParams,
     ) -> Dict:
 
         entities: List[CandidateDTO] = []
 
-        for c in raw_candidates:
-            # --- experience
+        for c in candidates:
             experience = c.experience or []
             if not experience:
                 continue
 
-            # --- extracted skills
             extracted_skills = [s.lower() for s in (c.extracted_skills or [])]
 
-            if skills and not any(s.lower() in extracted_skills for s in skills):
+            if filters.skills and not any(
+                s.lower() in extracted_skills for s in filters.skills
+            ):
                 continue
 
-            # --- industries from experience
-            industries = list({
-                j.company_details.industry
-                for j in experience
-                if j.company_details and j.company_details.industry
-            })
+            industries = {
+                e.company_details.industry
+                for e in experience
+                if e.company_details and e.company_details.industry
+            }
 
-            if industry and not any(industry.lower() in i.lower() for i in industries):
+            if filters.industry and not any(
+                filters.industry.lower() in i.lower() for i in industries
+            ):
                 continue
 
-            # --- total experience
-            total_months = sum(j.duration_in_month or 0 for j in experience)
+            total_months = sum(e.duration_in_month or 0 for e in experience)
             total_years = round(total_months / 12, 2)
 
-            if min_years and total_years < min_years:
+            if filters.min_years_experience and total_years < filters.min_years_experience:
                 continue
 
-            # --- safe contact info access
             contact = c.contact_info
             name = contact.name.formatted_name if contact and contact.name else None
             email = contact.email if contact else None
@@ -58,17 +57,26 @@ class CandidateService:
                 else None
             )
 
-            entity = CandidateDTO(
-                candidate_id=email,  # or another stable ID
-                name=name,
-                email=email,
-                location=location,
+            education = c.education or []
+            institution = education[0].institution_name if education else None
+
+            candidate_id = generate_candidate_id(
+                full_name=name,
                 highest_degree=c.highest_degree,
-                total_experience_years=total_years,
-                skills=extracted_skills,
-                industries=industries,
+                institution=institution,
             )
 
-            entities.append(entity)
+            entities.append(
+                CandidateDTO(
+                    candidate_id=candidate_id,
+                    name=name,
+                    email=email,
+                    location=location,
+                    highest_degree=c.highest_degree,
+                    total_experience_years=total_years,
+                    skills=extracted_skills,
+                    industries=list(industries),
+                )
+            )
 
-        return await self.candidate_repository.upsert_candidates(entities)
+        return await self._repository.upsert_candidates(entities)
