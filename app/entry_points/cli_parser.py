@@ -4,7 +4,6 @@ from typing import List
 from app.models.dto.filter_params import CandidateFilterParams
 from app.entry_points.exceptions import InvalidCliArguments
 
-
 class CliArgumentParser:
     def parse_filter_arguments(
         self,

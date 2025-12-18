@@ -1,62 +1,153 @@
-✅ Simple Steps to Run the Script
-1️⃣ Create and activate a virtual environment
-python -m venv venv
+# Candidate Filtering CLI – User Guide
 
+This script allows you to **retrieve candidate profiles**, **apply filters**, and **store filtered results** in a MongoDB database.  
+It is designed to be **simple, safe, and HR-friendly**, without exposing technical details.
 
-Windows
+---
 
-venv\Scripts\activate
+## Prerequisites
 
+Before running the script, make sure you have:
 
-Mac / Linux
+- Python **3.11+**
+- MongoDB running locally or accessible remotely
+- Required Python dependencies installed
 
+### Step 1: Create Virtual Environment
+
+Create and activate a Python virtual environment:
+
+**On macOS/Linux:**
+```bash
+python3 -m venv venv
 source venv/bin/activate
+```
 
-2️⃣ Install dependencies
+**On Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### Step 2: Install Dependencies
+
+Install required packages:
+```bash
 pip install -r requirements.txt
+```
 
-3️⃣ Start MongoDB
+### Step 3: Configure Environment Variables
 
-Make sure MongoDB is running locally:
+Create a `.env` file in the project root directory:
+```bash
+touch .env
+```
+Create a `.env` file in the project root directory by copying the example:
 
-mongodb://localhost:27017
+**On macOS/Linux:**
+```bash
+cp .env.example .env
+```
 
+**On Windows (Command Prompt):**
+```cmd
+copy .env.example .env
+```
 
-Or via Docker:
+**On Windows (PowerShell):**
+```powershell
+Copy-Item .env.example .env
+```
 
-docker run -d -p 27017:27017 mongo
-
-4️⃣ Create .env file (project root)
+Add the following configuration to `.env`:
+```env
 MONGO_URI=mongodb://localhost:27017
-MONGO_DB=rankings_db
+MONGO_DB=candidates
 LOG_LEVEL=INFO
+```
 
-5️⃣ Run Exercise 1 – Load candidates
+> **Note:** The `.env.example` file contains template values. Make sure to update them with your actual configuration.
+
+### Step 4: Start MongoDB
+
+Ensure MongoDB is running:
+
+**Using MongoDB locally:**
+```bash
+mongod
+```
+
+
+## Running Commands
+
+All commands are executed from the project root directory.
+```bash
+python -m app.main  [options]
+```
+
+## Available Commands
+
+### 1. Get All Candidates
+
+Retrieves candidates from the external data source and prints a readable summary for each one.
+```bash
 python -m app.main get-candidates
+```
 
-6️⃣ Run Exercise 2 – Filter candidates
-python -m app.main filter-candidates \
-  --industry "Real Estate" \
-  --skills "general ledger" \
-  --min-experience 3
+**What this does:**
+- Connects to the candidate data source
+- Displays candidate experience history and gaps
+- Does not store data in the database
 
-🧪 Other examples
+---
 
-Filter by skills only:
+### 2. Filter Candidates (Main Use Case)
 
-python -m app.main filter-candidates --skills python sql
+Filters candidates based on criteria and saves the results to MongoDB.
+```bash
+python -m app.main filter-candidates --industry "Real Estate" --skills "general ledger" --min-experience 10
+```
 
+#### Supported Filters
 
-Filter by experience only:
+| Option | Description |
+|--------|-------------|
+| `--industry` | Industry to match (case-insensitive) |
+| `--skills` | One or more skills (space-separated) |
+| `--min-experience` | Minimum years of experience |
 
-python -m app.main filter-candidates --min-experience 10
+> **Note:** You can omit any filter if not needed.
 
-❗ If something fails
+---
 
-Check MongoDB is running
+## Example Output (User-Friendly)
+```
+Candidate filtering completed successfully.
 
-Check .env values
+Filters applied:
+- Industry: Real Estate
+- Skills: general ledger
+- Minimum experience: 10 years
 
-Run with logs:
+Results:
+- Candidates matched: 3
+- Candidates saved: 3
+- Candidates skipped: 12
+```
 
-LOG_LEVEL=DEBUG python -m app.main get-candidates
+> **Privacy:** No candidate names or personal details are shown during filtering.
+
+---
+
+## Where Filtered Data Is Stored
+
+Filtered candidates are saved in MongoDB under:
+
+- **Database:** `candidates`
+- **Collection:** `filtered_candidates`
+
+Each candidate is stored idempotently (re-running the command will not create duplicates).
+
+---
+
+__Thanks for reading my code 😊__

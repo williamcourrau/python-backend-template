@@ -1,2 +1,7 @@
+pytest-asyncio
 requests
 pydantic
+pymongo
+python-dotenv
+motor
+pydantic-settings
