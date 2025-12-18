@@ -11,7 +11,7 @@ class CandidateService:
     def __init__(self, candidate_repository: ICandidateRepository):
         self._repository = candidate_repository
 
-    async def filter_and_persist(
+    async def filter_candidates(
         self,
         candidates: List[Candidate],
         filters: CandidateFilterParams,

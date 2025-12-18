@@ -1,2 +1,7 @@
-# python-backend-template
-Python Backend Template for Repository Pattern
+# 
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+
+pip install -r requirements.txt

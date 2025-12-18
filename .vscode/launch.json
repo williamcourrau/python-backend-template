@@ -1,12 +1,48 @@
+// {
+//   "version": "0.2.0",
+//   "configurations": [
+//     {
+//       "name": "Python: get-candidates",
+//       "type": "debugpy",
+//       "request": "launch",
+//       "module": "app.main",
+//       "cwd": "${workspaceFolder}",
+//       "args": ["get-candidates"],
+//       "env": {
+//         "LOG_LEVEL": "DEBUG"
+//       },
+//       "console": "integratedTerminal"
+//     }
+//   ]
+// }
+
 {
   "version": "0.2.0",
   "configurations": [
+    // {
+    //   "name": "Python: get-candidates",
+    //   "type": "debugpy",
+    //   "request": "launch",
+    //   "module": "app.main",
+    //   "cwd": "${workspaceFolder}",
+    //   "args": ["get-candidates"],
+    //   "env": {
+    //     "LOG_LEVEL": "DEBUG"
+    //   },
+    //   "console": "integratedTerminal"
+    // },
     {
-      "name": "Python: app.main",
+      "name": "Python: filter-candidates",
       "type": "debugpy",
       "request": "launch",
       "module": "app.main",
       "cwd": "${workspaceFolder}",
+      "args": [
+        "filter-candidates",
+        "--industry", "Real Estate",
+        "--skills", "general ledger",
+        "--min-experience", "10"
+      ],
       "env": {
         "LOG_LEVEL": "DEBUG"
       },
