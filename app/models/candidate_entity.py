@@ -95,6 +95,11 @@ class Certificate(BaseModel):
     name: Optional[str] = None
 
 class Candidate(BaseModel):
+    """
+    Represents a raw candidate record as received from the external recruiting API.
+    This model is used strictly for data ingestion and parsing.
+    It should not contain business logic or persistence behavior.
+    """
     highest_degree: Optional[str] = None
     languages: Optional[List[Language]] = None
     experience: Optional[List[Experience]] = None

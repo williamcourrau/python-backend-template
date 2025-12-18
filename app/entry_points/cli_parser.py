@@ -30,7 +30,7 @@ class CliArgumentParser:
             help="Minimum years of experience (>= 0)",
         )
 
-        args = parser.parse_args(raw_args)  # ✅ FIX
+        args = parser.parse_args(raw_args)
 
         skills = self._validate_skills(args.skills)
         min_years = self._validate_min_experience(args.min_experience)

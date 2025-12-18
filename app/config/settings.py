@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     HOST : str = "0.0.0.0"
     PORT : int = 8000
     
+    FILTERED_CANDIDATES_COLLECTION: str = "filtered_candidates"
+    
+    CANDIDATE_SOURCE_URL: str = (
+        "https://recruiting-test-resume-data.hiredscore.com/ps-dev-allcands-full-api_hub_b1f6.json"
+    )
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

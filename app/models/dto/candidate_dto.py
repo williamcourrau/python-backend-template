@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List, Optional
 
 
@@ -12,3 +12,12 @@ class CandidateDTO:
     total_experience_years: float
     skills: List[str]
     industries: List[str]
+    
+    def to_persistence_dict(self) -> dict:
+        """
+        Returns a MongoDB-safe dictionary representation.
+        Excludes candidate_id because it is used as the upsert key.
+        """
+        data = asdict(self)
+        data.pop("candidate_id", None)
+        return data
