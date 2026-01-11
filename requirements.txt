@@ -5,3 +5,4 @@ pymongo
 python-dotenv
 motor
 pydantic-settings
+cffi
